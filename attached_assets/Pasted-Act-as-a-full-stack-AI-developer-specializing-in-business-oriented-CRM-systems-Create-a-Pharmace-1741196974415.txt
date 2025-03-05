@@ -1,0 +1,63 @@
+Act as a full-stack AI developer specializing in business-oriented CRM systems.  
+Create a *Pharmaceutical B2B CRM* using *Vite, TypeScript, React, ShadCN UI, Tailwind CSS (Frontend)* and *Supabase (Backend & Database)*.  
+
+### *Core Functionalities:*  
+1. *User Authentication & Role Management*  
+   - Roles: Sales Rep, Manager, Manufacturer, Admin  
+   - Secure login via Supabase authentication  
+   - Role-based access control  
+
+2. *Lead & Customer Management*  
+   - Leads table: Fields for name, contact, status (New, Contacted, Converted, Lost)  
+   - Customer database: Stores past orders, interactions, and preferences  
+
+3. *Order Processing & Management*  
+   - Order entry system: Captures product, quantity, and buyer details  
+   - Status tracking: Pending, Approved, In Production, Dispatched, Delivered  
+   - Manufacturer assignment: Assign orders to manufacturers  
+
+4. *Manufacturer & Supplier Coordination*  
+   - Manufacturer database: Stores details & production capacity  
+   - Order forwarding: Sends orders to manufacturers with delivery deadlines  
+   - Status updates: Manufacturers update progress  
+
+5. *Tasks & Employee Management*  
+   - Task assignment: Assign leads, order follow-ups, and general tasks to employees  
+   - Task status tracking: Pending, In Progress, Completed  
+   - Automated task notifications  
+
+6. *Dashboard & Performance Insights*  
+   - Lead conversion rate  
+   - Order volume & revenue trends  
+   - Manufacturer performance tracking  
+   - Task completion analytics  
+
+7. *Notifications & Automated Follow-Ups*  
+   - Order reminders for sales reps  
+   - Manufacturer delay alerts  
+   - Automated lead follow-ups  
+   - Task due & overdue notifications  
+
+8. *Data Backup, Reporting & UI/UX Enhancements*  
+   - CSV export for leads, orders & tasks  
+   - Quick search functionality  
+   - Modern UI with easy navigation  
+   - Mobile responsiveness for sales reps on the go  
+
+### *Technical Stack & Integration Instructions:*  
+- *Frontend:* Vite + TypeScript + React + ShadCN UI + Tailwind CSS  
+- *Backend:* Supabase (PostgreSQL) for user authentication, database, and API management  
+- *Database Structure:*  
+   - Users (id, name, role, email, password_hash)  
+   - Leads (id, name, contact, status, assigned_to)  
+   - Orders (id, buyer_id, manufacturer_id, product_details, status, created_at)  
+   - Manufacturers (id, name, contact, production_capacity)  
+   - Tasks (id, assigned_to, description, status, due_date)  
+- *Deployment:* Ensure the app is hosted on Replit with proper Supabase integration  
+
+### *Requirements for Replit Execution:*  
+- Implement *Supabase authentication & database connection*  
+- Ensure *frontend & backend are connected seamlessly*  
+- Optimize UI for a *smooth user experience*  
+
+Deploy and provide an overview of the final implementation.
