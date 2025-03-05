@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertUserSchema, insertLeadSchema, insertOrderSchema, insertTaskSchema, insertManufacturerSchema } from "@shared/schema";
 import { hashPassword, comparePasswords } from "./auth";
+import { Request, Response, NextFunction } from 'express';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
@@ -163,6 +164,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     const manufacturer = await storage.createManufacturer(parseResult.data);
     res.json(manufacturer);
+  });
+
+  // Add error handlers for the server
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+
+    res.status(status).json({ message });
+    throw err;
   });
 
   const httpServer = createServer(app);
