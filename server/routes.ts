@@ -7,57 +7,83 @@ import { hashPassword, comparePasswords } from "./auth";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.post("/api/auth/login", async (req, res) => {
-    const { email, password } = req.body;
-    const user = await storage.getUserByEmail(email);
+    try {
+      const { email, password } = req.body;
 
-    if (!user || !(await comparePasswords(password, user.password))) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+      }
+
+      const user = await storage.getUserByEmail(email);
+
+      if (!user || !(await comparePasswords(password, user.password))) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      req.session.userId = user.id;
+      const { password: _, ...userWithoutPassword } = user;
+      return res.json(userWithoutPassword);
+    } catch (error) {
+      console.error('Login error:', error);
+      return res.status(500).json({ message: "Internal server error" });
     }
-
-    req.session.userId = user.id;
-    const { password: _, ...userWithoutPassword } = user;
-    return res.json(userWithoutPassword);
   });
 
   app.post("/api/auth/register", async (req, res) => {
-    const parseResult = insertUserSchema.safeParse(req.body);
-    if (!parseResult.success) {
-      return res.status(400).json({ message: "Invalid user data" });
+    try {
+      const parseResult = insertUserSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ message: "Invalid user data" });
+      }
+
+      const existingUser = await storage.getUserByEmail(req.body.email);
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already exists" });
+      }
+
+      const hashedPassword = await hashPassword(req.body.password);
+      const user = await storage.createUser({
+        ...parseResult.data,
+        password: hashedPassword
+      });
+
+      req.session.userId = user.id;
+      const { password: _, ...userWithoutPassword } = user;
+      return res.json(userWithoutPassword);
+    } catch (error) {
+      console.error('Registration error:', error);
+      return res.status(500).json({ message: "Internal server error" });
     }
-
-    const existingUser = await storage.getUserByEmail(req.body.email);
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already exists" });
-    }
-
-    const hashedPassword = await hashPassword(req.body.password);
-    const user = await storage.createUser({
-      ...parseResult.data,
-      password: hashedPassword
-    });
-
-    req.session.userId = user.id;
-    const { password: _, ...userWithoutPassword } = user;
-    return res.json(userWithoutPassword);
   });
 
   app.post("/api/auth/logout", (req, res) => {
-    req.session.destroy(() => {
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Logout error:', err);
+        return res.status(500).json({ message: "Error during logout" });
+      }
       res.status(200).json({ message: "Logged out" });
     });
   });
 
   // Auth check middleware
   app.get("/api/auth/me", async (req, res) => {
-    if (!req.session.userId) {
-      return res.status(401).json({ message: "Not authenticated" });
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+
+      const { password: _, ...userWithoutPassword } = user;
+      res.json(userWithoutPassword);
+    } catch (error) {
+      console.error('Auth check error:', error);
+      return res.status(500).json({ message: "Internal server error" });
     }
-    const user = await storage.getUser(req.session.userId);
-    if (!user) {
-      return res.status(401).json({ message: "User not found" });
-    }
-    const { password: _, ...userWithoutPassword } = user;
-    res.json(userWithoutPassword);
   });
 
   // Leads routes
