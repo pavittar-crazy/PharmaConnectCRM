@@ -32,21 +32,29 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md mx-4">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">
-            Pharma CRM Login
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
+      <div className="absolute top-8 left-0 w-full text-center">
+        <h1 className="text-3xl font-bold text-primary">Pavittar Pharma</h1>
+        <p className="text-sm text-muted-foreground mt-1">A Rishul Chanana Production</p>
+      </div>
+      <Card className="w-full max-w-md mx-4 shadow-lg border-0">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-2xl font-bold text-center text-primary">
+            Welcome Back
           </CardTitle>
+          <p className="text-center text-muted-foreground text-sm">
+            Sign in to access your Pharma CRM dashboard
+          </p>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <CardContent className="pt-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <Input
                 type="email"
-                placeholder="Email"
+                placeholder="Email Address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="h-11 px-4"
                 required
               />
             </div>
@@ -56,15 +64,16 @@ export default function Login() {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="h-11 px-4"
                 required
               />
             </div>
             <Button
               type="submit"
-              className="w-full"
+              className="w-full h-11 font-medium"
               disabled={isLoading}
             >
-              {isLoading ? "Loading..." : "Login"}
+              {isLoading ? "Authenticating..." : "Sign In"}
             </Button>
           </form>
         </CardContent>

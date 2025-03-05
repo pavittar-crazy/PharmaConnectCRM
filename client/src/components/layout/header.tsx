@@ -16,16 +16,20 @@ export function Header() {
   };
 
   return (
-    <header className="border-b">
-      <div className="flex h-16 items-center px-4">
-        <h2 className="text-2xl font-bold text-foreground">Pharma CRM</h2>
+    <header className="border-b bg-white shadow-sm">
+      <div className="container mx-auto flex h-16 items-center px-4">
+        <div className="flex flex-col">
+          <h2 className="text-2xl font-bold text-primary">Pavittar Pharma</h2>
+          <p className="text-xs text-muted-foreground">A Rishul Chanana Production</p>
+        </div>
         <div className="ml-auto flex items-center space-x-4">
           {user && (
             <div className="flex items-center gap-4">
-              <span className="text-sm text-muted-foreground">
-                {user.name} ({user.role})
-              </span>
-              <Button variant="outline" onClick={handleLogout}>
+              <div className="flex flex-col items-end">
+                <span className="font-medium text-sm">{user.name}</span>
+                <span className="text-xs text-muted-foreground">{user.role}</span>
+              </div>
+              <Button variant="outline" onClick={handleLogout} className="rounded-full">
                 Logout
               </Button>
             </div>
