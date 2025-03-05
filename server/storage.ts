@@ -52,6 +52,14 @@ export class MemStorage implements IStorage {
     this.orders = new Map();
     this.tasks = new Map();
     this.currentId = 1;
+
+    // Add a test admin user
+    this.createUser({
+      email: "admin@example.com",
+      password: "admin123",
+      name: "Admin User",
+      role: "Admin"
+    });
   }
 
   // Users
