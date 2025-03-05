@@ -24,6 +24,7 @@ A comprehensive Customer Relationship Management system for pharmaceutical compa
 
 ### Database
 - **PostgreSQL**: Relational database (via Neon Serverless)
+- **Google Sheets**: Optional integration for data storage and access from anywhere
 
 ## Project Structure
 
@@ -131,12 +132,28 @@ npm run build
 npm start
 ```
 
+## Google Sheets Integration
+
+To use Google Sheets for data storage:
+
+1. Create a Google Cloud project and enable the Google Sheets API
+2. Create a service account and download the JSON key
+3. Create a new Google Sheet and share it with the service account email
+4. Add the following environment variables:
+   - `USE_GOOGLE_SHEETS=true`
+   - `GOOGLE_CLIENT_EMAIL=your-service-account@project.iam.gserviceaccount.com`
+   - `GOOGLE_PRIVATE_KEY=your-private-key`
+   - `GOOGLE_SPREADSHEET_ID=your-spreadsheet-id`
+
+With this setup, the application will store data in both the PostgreSQL database and Google Sheets, allowing you to access the data from anywhere.
+
 ## Security Notes
 
 - This application uses express-session for session management
 - Password hashing is implemented in the auth.ts file
 - The session secret should be changed in a production environment
 - Consider setting up proper environment variables for sensitive configuration
+- When using Google Sheets integration, make sure to secure your service account credentials
 
 ## License
 

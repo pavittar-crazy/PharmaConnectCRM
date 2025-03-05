@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { hybridStorage as storage } from "./hybrid-storage";
 import { insertUserSchema, insertLeadSchema, insertOrderSchema, insertTaskSchema, insertManufacturerSchema } from "@shared/schema";
 import { hashPassword, comparePasswords } from "./auth";
 import { Request, Response, NextFunction } from 'express';

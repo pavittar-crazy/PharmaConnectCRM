@@ -1,7 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { setupVite, log } from "./vite";
+import { sheetsService } from "./sheets"; // Added import for Google Sheets service
 
 // Extend Express Session type
 declare module "express-session" {
@@ -92,3 +93,22 @@ app.get("/api/auth/me", (req, res) => {
     log(`serving on port ${port}`);
   });
 })();
+
+//Added this part.  Needs a corresponding sheets.ts file.
+//This is a placeholder, and you will need to replace it with your actual implementation.
+//This section also requires environment variables to be configured properly.
+//Please consult Google Sheets API documentation for details.
+
+//sheets.ts
+// export const sheetsService = {
+//   async setupSheets() {
+//     // Your Google Sheets setup logic here.  This will likely involve authenticating
+//     // with the Google API and establishing a connection to your spreadsheet.
+//   },
+//   async getData(sheetName, range){
+//     //Your logic to retrieve data from the Google Sheets here
+//   },
+//   async setData(sheetName, range, data){
+//     //Your logic to write data to the Google Sheets here
+//   }
+// }
