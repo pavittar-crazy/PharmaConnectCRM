@@ -148,11 +148,13 @@ export class DatabaseStorage implements IStorage {
 async function createInitialAdmin() {
   const storage = new DatabaseStorage();
   const existingAdmin = await storage.getUserByEmail("admin@example.com");
+  const { hashPassword } = await import("./auth");
 
   if (!existingAdmin) {
+    const hashedPassword = await hashPassword("admin123");
     await storage.createUser({
       email: "admin@example.com",
-      password: "admin123",
+      password: hashedPassword,
       name: "Admin User",
       role: "Admin"
     });

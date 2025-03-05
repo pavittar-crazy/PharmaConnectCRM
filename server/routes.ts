@@ -2,19 +2,21 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertUserSchema, insertLeadSchema, insertOrderSchema, insertTaskSchema, insertManufacturerSchema } from "@shared/schema";
+import { hashPassword, comparePasswords } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.post("/api/auth/login", async (req, res) => {
     const { email, password } = req.body;
     const user = await storage.getUserByEmail(email);
-    
-    if (!user || user.password !== password) {
+
+    if (!user || !(await comparePasswords(password, user.password))) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
     req.session.userId = user.id;
-    return res.json(user);
+    const { password: _, ...userWithoutPassword } = user;
+    return res.json(userWithoutPassword);
   });
 
   app.post("/api/auth/register", async (req, res) => {
@@ -23,15 +25,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(400).json({ message: "Invalid user data" });
     }
 
-    const user = await storage.createUser(parseResult.data);
+    const existingUser = await storage.getUserByEmail(req.body.email);
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
+
+    const hashedPassword = await hashPassword(req.body.password);
+    const user = await storage.createUser({
+      ...parseResult.data,
+      password: hashedPassword
+    });
+
     req.session.userId = user.id;
-    return res.json(user);
+    const { password: _, ...userWithoutPassword } = user;
+    return res.json(userWithoutPassword);
   });
 
   app.post("/api/auth/logout", (req, res) => {
     req.session.destroy(() => {
       res.status(200).json({ message: "Logged out" });
     });
+  });
+
+  // Auth check middleware
+  app.get("/api/auth/me", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    const user = await storage.getUser(req.session.userId);
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+    const { password: _, ...userWithoutPassword } = user;
+    res.json(userWithoutPassword);
   });
 
   // Leads routes
